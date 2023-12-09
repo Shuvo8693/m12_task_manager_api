@@ -6,6 +6,7 @@ import 'package:m12_task_manager_api/Data/NetWorkCaller/network_caller.dart';
 import 'package:m12_task_manager_api/Data/Url/Url.dart';
 import 'package:m12_task_manager_api/Data/pojo_model_class/TaskListModal.dart';
 import 'package:m12_task_manager_api/Screen/login_screen.dart';
+import 'package:m12_task_manager_api/main.dart';
 import '../../Data/pojo_model_class/Count_Status.dart';
 import '../../Widget/CardViewItem.dart';
 import '../../Widget/Profile_summery.dart';
@@ -41,7 +42,7 @@ class _NewTaskState extends State<NewTask> {
     if (response.isSuccess) {
       taskListModel = TaskListModal.fromJson(response.jsonResponse!);
     }else if(response.statusCode==401){
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>LoginScreen()));
+      Navigator.pushReplacement(TaskManager.navigatorKey.currentContext!, MaterialPageRoute(builder: (context)=>LoginScreen()));
     }
   }
 

@@ -137,7 +137,6 @@ class _LoginScreenState extends State<LoginScreen> {
     }
     if(netResponse.isSuccess){
       clearField();
-      SharedPreferences sharedPreferences=await SharedPreferences.getInstance();
      await AuthController().saveUserInfo(netResponse.jsonResponse!['token'],  // await dear reason: ekhane api respone complete na hoa porjonto next code e jabe na. eta na dele screen eduke loading hota thake or back kore login e chole ashe
              UserModel.fromJson(netResponse.jsonResponse!['data']));
       if(mounted) {

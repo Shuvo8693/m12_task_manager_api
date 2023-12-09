@@ -14,8 +14,7 @@ class NetworkCaller {
     log(url);
     log(body.toString());
     try {
-      final Response response = await post(Uri.parse(url),
-          body: jsonEncode(body),
+      final Response response = await post(Uri.parse(url), body: jsonEncode(body),
           headers: {
             'Content-Type': 'application/json',
             'token': AuthController.token.toString()
@@ -46,6 +45,7 @@ class NetworkCaller {
       return NetworkResponse(isSuccess: false, eRRor: error.toString());
     }
   }
+
 
   Future<NetworkResponse> getRequest(String url) async {
     log(url);

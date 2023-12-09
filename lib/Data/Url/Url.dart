@@ -11,6 +11,7 @@ class Urls {
   static  String completedTask= '$baseUrl/listTaskByStatus/${UpdateTaskEn.Completed.name}';
   static  String cancelledTask= '$baseUrl/listTaskByStatus/${UpdateTaskEn.Cancelled.name}';
   static  String deleteTask(String sId)=> '$baseUrl/deleteTask/$sId';
+  static  String verifyMail(String value)=> '$baseUrl/RecoverVerifyEmail/$value';
 
   static updateTaskLink(String sID,String enValue)=> '$baseUrl/updateTaskStatus/$sID/$enValue';
   static const String updateProfile= '$baseUrl/profileUpdate';
