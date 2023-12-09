@@ -50,7 +50,7 @@ class _ProgressState extends State<Progress> {
       body: SafeArea(
           child: Column(
         children: [
-          ProfileSummary(),
+          const ProfileSummary(),
           Expanded(
             child: Visibility(
               visible: progressInProgress==false,

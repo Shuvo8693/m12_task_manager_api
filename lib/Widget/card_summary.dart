@@ -11,7 +11,7 @@ class CardSummary extends StatelessWidget {
     return Card(
       color: Colors.white,
       child: Padding(
-        padding:  EdgeInsets.symmetric(horizontal:20,vertical: 8 ),
+        padding:  const EdgeInsets.symmetric(horizontal:20,vertical: 8 ),
         child: Column(
           children: [
             Text(count,style: Theme.of(context).textTheme.titleLarge,),  ///value ta ekhane variable er moddome ana hoace

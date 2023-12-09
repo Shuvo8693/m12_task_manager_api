@@ -15,9 +15,9 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
 
   Future<void> gotoLogin() async {
-  final bool isLogin =await AuthController.authCheck();
+  final bool isLogin =await AuthController().authCheck();
     Future.delayed(const Duration(seconds: 2)).then((value) => Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) =>isLogin ? BottomNavBar():LoginScreen())));
+        context, MaterialPageRoute(builder: (context) =>isLogin ? const BottomNavBar():const LoginScreen())));
   }
 
   @override

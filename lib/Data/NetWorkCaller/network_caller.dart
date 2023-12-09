@@ -77,7 +77,7 @@ class NetworkCaller {
   Future<void>backToLogIn()async {
 
     await AuthController.clearCache();
-    Navigator.pushAndRemoveUntil(TaskManager.navigatorKey.currentContext!, MaterialPageRoute(builder: (context)=>LoginScreen()), (route) => false);
+    Navigator.pushAndRemoveUntil(TaskManager.navigatorKey.currentContext!, MaterialPageRoute(builder: (context)=>const LoginScreen()), (route) => false);
 
   }
 }

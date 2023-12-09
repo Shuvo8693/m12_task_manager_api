@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:m12_task_manager_api/Data/NetWorkCaller/NetworkResponse.dart';
 import 'package:m12_task_manager_api/Data/NetWorkCaller/network_caller.dart';
 import 'package:m12_task_manager_api/Data/Url/Url.dart';
-import 'package:m12_task_manager_api/Screen/BottomNavSreenSub/newTask_screen.dart';
 import 'package:m12_task_manager_api/Widget/SnackMessage.dart';
 import 'package:m12_task_manager_api/main.dart';
 import '../Widget/Profile_summery.dart';
@@ -27,7 +26,7 @@ class _AddNewTaskScreenState extends State<AddNewTaskScreen> {
       body: SafeArea(
         child: Column(
             children: [
-              ProfileSummary(),
+              const ProfileSummary(),
               Expanded(
                 child: BackgroundBody(
                   child: SingleChildScrollView(

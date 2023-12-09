@@ -50,7 +50,7 @@ class _CompletedState extends State<Completed> {
       body: SafeArea(
           child: Column(
         children: [
-          ProfileSummary(),
+          const ProfileSummary(),
           Expanded(
             child: Visibility(
               visible: !completedInProgress,

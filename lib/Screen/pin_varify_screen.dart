@@ -53,7 +53,7 @@ class _PinVerifyScreenState extends State<PinVerifyScreen> {
                       selectedFillColor: Colors.black12,
                       inactiveFillColor: Colors.white, //box er vitorer color
                     ),
-                    animationDuration: Duration(milliseconds: 500),
+                    animationDuration: const Duration(milliseconds: 500),
                     enableActiveFill: true,
                     backgroundColor: Colors.transparent,  // box er background e default white 1 ta bar show kore ,tai seta ke transparent korahoace.
                   ),
@@ -68,7 +68,7 @@ class _PinVerifyScreenState extends State<PinVerifyScreen> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => SetPasswordScreen()));
+                                    builder: (context) => const SetPasswordScreen()));
                           },
                           child:
                               const Icon(Icons.arrow_circle_right_outlined))),
@@ -84,7 +84,7 @@ class _PinVerifyScreenState extends State<PinVerifyScreen> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => LoginScreen()));
+                                    builder: (context) => const LoginScreen()));
                           },
                           child: const Text('Sign In')),
                     ],

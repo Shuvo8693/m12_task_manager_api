@@ -1,10 +1,10 @@
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:m12_task_manager_api/Data/NetWorkCaller/NetworkResponse.dart';
 import 'package:m12_task_manager_api/Data/NetWorkCaller/network_caller.dart';
 import 'package:m12_task_manager_api/Data/Url/Url.dart';
 import 'package:m12_task_manager_api/Widget/SnackMessage.dart';
+import 'package:m12_task_manager_api/main.dart';
 import '../Widget/background_picture.dart';
 import 'login_screen.dart';
 
@@ -48,7 +48,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     TextFormField(
                         controller: _emailTEC,
                         keyboardType: TextInputType.emailAddress,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           hintText: 'Email',
                         ),
                         validator: (String? value) {
@@ -63,7 +63,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     TextFormField(
                         controller: _firstNameTEC,
                         keyboardType: TextInputType.name,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           hintText: 'First Name',
                         ),
                         validator: (String? value) {
@@ -78,7 +78,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     TextFormField(
                         controller: _lastNameTEC,
                         keyboardType: TextInputType.name,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           hintText: 'Last Name',
                         ),
                         validator: (String? value) {
@@ -93,7 +93,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     TextFormField(
                         controller: _phoneNulTEC,
                         keyboardType: TextInputType.phone,
-                        decoration: InputDecoration(
+                        decoration: const InputDecoration(
                           hintText: 'Phone Number',
                         ),
                         validator: (String? value) {
@@ -109,7 +109,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       controller: _passWordTEC,
                       obscureText: true,
                       keyboardType: TextInputType.text,
-                      decoration: InputDecoration(
+                      decoration: const InputDecoration(
                         hintText: 'Password',
                       ),
                       validator: (String? value) {
@@ -122,7 +122,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         return null;
                       },
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 25,
                     ),
                     SizedBox(
@@ -130,7 +130,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         height: 45,
                         child:  Visibility( /// visible true hola ,replacement widget Show kora, ar visible false thakle child show kore.
                           visible: _inProgress==false,
-                          replacement: Center(child: CircularProgressIndicator()),
+                          replacement: const Center(child: CircularProgressIndicator()),
                           child: ElevatedButton(
                                   onPressed: signUp, //<-----
                                   child: const Icon(
@@ -148,7 +148,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               Navigator.pushAndRemoveUntil(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => LoginScreen()),
+                                      builder: (context) => const LoginScreen()),
                                   (route) => false);
                             },
                             child: const Text('Sign in')),
@@ -190,7 +190,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           snackMessage(
               context, 'Your Account Has been Created, Please Sign in');
         }
-        Navigator.push(context, MaterialPageRoute(builder: (context)=>LoginScreen()));
+        Navigator.push(TaskManager.navigatorKey.currentContext!, MaterialPageRoute(builder: (context)=>const LoginScreen()));
       } else {
         if (mounted) {
           snackMessage(

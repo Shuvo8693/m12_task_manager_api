@@ -56,7 +56,7 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
                       height: 45,
                       child: ElevatedButton(
                           onPressed: () {
-                            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>LoginScreen()), (route) => false);
+                            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=>const LoginScreen()), (route) => false);
                           },
                           child:
                               const Icon(Icons.arrow_circle_right_outlined))),
@@ -70,7 +70,7 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
                       const Text(" Have Account ?"),
                       TextButton(
                           onPressed: () {
-                            Navigator.push(context, MaterialPageRoute(builder: (context)=>LoginScreen()));
+                            Navigator.push(context, MaterialPageRoute(builder: (context)=>const LoginScreen()));
                           }, child: const Text('Sign In')),
                     ],
                   ),

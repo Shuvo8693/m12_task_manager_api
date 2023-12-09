@@ -32,11 +32,11 @@ class _MailVerifyScreenState extends State<MailVerifyScreen> {
                   ),
                   TextFormField(
                     keyboardType: TextInputType.emailAddress,
-                    decoration: InputDecoration(
+                    decoration: const InputDecoration(
                       hintText: 'Email',
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 25,
                   ),
                   SizedBox(
@@ -44,7 +44,7 @@ class _MailVerifyScreenState extends State<MailVerifyScreen> {
                       height: 45,
                       child: ElevatedButton(
                           onPressed: () {
-                            Navigator.push(context, MaterialPageRoute(builder: (context)=>PinVerifyScreen()));
+                            Navigator.push(context, MaterialPageRoute(builder: (context)=>const PinVerifyScreen()));
                           },
                           child:
                               const Icon(Icons.arrow_circle_right_outlined))),
@@ -58,7 +58,7 @@ class _MailVerifyScreenState extends State<MailVerifyScreen> {
                       const Text(" Have Account ?"),
                       TextButton(
                           onPressed: () {
-                            Navigator.push(context, MaterialPageRoute(builder: (context)=>LoginScreen()));
+                            Navigator.push(context, MaterialPageRoute(builder: (context)=>const LoginScreen()));
                           }, child: const Text('Sign In')),
                     ],
                   ),

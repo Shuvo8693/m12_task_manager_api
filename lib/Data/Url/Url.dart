@@ -1,4 +1,3 @@
-import 'package:m12_task_manager_api/Data/pojo_model_class/TaskListModal.dart';
 import 'package:m12_task_manager_api/Widget/CardViewItem.dart';
 
 class Urls {
@@ -14,6 +13,7 @@ class Urls {
   static  String deleteTask(String sId)=> '$baseUrl/deleteTask/$sId';
 
   static updateTaskLink(String sID,String enValue)=> '$baseUrl/updateTaskStatus/$sID/$enValue';
+  static const String updateProfile= '$baseUrl/profileUpdate';
 
 }
 

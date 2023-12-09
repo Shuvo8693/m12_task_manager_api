@@ -50,7 +50,7 @@ class _CanceledState extends State<Canceled> {
       body: SafeArea(
           child: Column(
         children: [
-          ProfileSummary(),
+          const ProfileSummary(),
           Expanded(
             child: Visibility(
               visible: cancelledInProgress==false,

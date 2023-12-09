@@ -1,11 +1,11 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
 import 'package:m12_task_manager_api/Data/NetWorkCaller/NetworkResponse.dart';
 import 'package:m12_task_manager_api/Data/NetWorkCaller/network_caller.dart';
 import 'package:m12_task_manager_api/Data/Url/Url.dart';
 import 'package:m12_task_manager_api/Data/pojo_model_class/TaskListModal.dart';
+import 'package:m12_task_manager_api/Screen/login_screen.dart';
 import '../../Data/pojo_model_class/Count_Status.dart';
 import '../../Widget/CardViewItem.dart';
 import '../../Widget/Profile_summery.dart';
@@ -40,6 +40,8 @@ class _NewTaskState extends State<NewTask> {
     }
     if (response.isSuccess) {
       taskListModel = TaskListModal.fromJson(response.jsonResponse!);
+    }else if(response.statusCode==401){
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>LoginScreen()));
     }
   }
 
@@ -75,7 +77,7 @@ class _NewTaskState extends State<NewTask> {
       body: SafeArea(
         child: Column(
           children: [
-            ProfileSummary(),
+            const ProfileSummary(),
             Visibility(
               visible: countInProgress == false &&
                   (countStatus.countVariable?.isNotEmpty ?? false),
@@ -122,7 +124,7 @@ class _NewTaskState extends State<NewTask> {
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(context,
-              MaterialPageRoute(builder: (context) => AddNewTaskScreen()));
+              MaterialPageRoute(builder: (context) => const AddNewTaskScreen()));
         },
         child: const Icon(Icons.add),
       ),
