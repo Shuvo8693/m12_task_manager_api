@@ -1,17 +1,27 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:m12_task_manager_api/Data/Auth_Controller/auth_controller.dart';
+import 'package:m12_task_manager_api/Data/NetWorkCaller/NetworkResponse.dart';
+import 'package:m12_task_manager_api/Data/NetWorkCaller/network_caller.dart';
+import 'package:m12_task_manager_api/Data/Url/Url.dart';
+import 'package:m12_task_manager_api/Data/pojo_model_class/user_model.dart';
 import 'package:m12_task_manager_api/Screen/set_password_screen.dart';
+import 'package:m12_task_manager_api/main.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import '../Widget/background_picture.dart';
 import 'login_screen.dart';
 
 class PinVerifyScreen extends StatefulWidget {
-  const PinVerifyScreen({super.key});
-
+ const  PinVerifyScreen({super.key,required this.email});
+  final String email;
   @override
   State<PinVerifyScreen> createState() => _PinVerifyScreenState();
 }
 
 class _PinVerifyScreenState extends State<PinVerifyScreen> {
+  final TextEditingController _pinTEController= TextEditingController();
+ bool _pinInProgress=false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,6 +49,7 @@ class _PinVerifyScreenState extends State<PinVerifyScreen> {
                     height: 30,
                   ),
                   PinCodeTextField(
+                    controller: _pinTEController,
                     animationType: AnimationType.fade,
                     obscureText: false,
                     appContext: (context),
@@ -63,15 +74,16 @@ class _PinVerifyScreenState extends State<PinVerifyScreen> {
                   SizedBox(
                       width: double.infinity,
                       height: 45,
-                      child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => const SetPasswordScreen()));
-                          },
-                          child:
-                              const Icon(Icons.arrow_circle_right_outlined))),
+                      child: Visibility(
+                        visible: _pinInProgress==false,
+                        replacement: const Center(child: CircularProgressIndicator()),
+                        child: ElevatedButton(
+                            onPressed: () {
+                              pinVerification();
+                            },
+                            child:
+                                const Icon(Icons.arrow_circle_right_outlined)),
+                      )),
                   const SizedBox(
                     height: 30,
                   ),
@@ -97,4 +109,19 @@ class _PinVerifyScreenState extends State<PinVerifyScreen> {
       )),
     );
   }
+   Future<void>pinVerification()async{
+    _pinInProgress=true;
+    if(mounted){
+      setState(() {});
+    }
+     NetworkResponse response=await NetworkCaller().getRequest(Urls.pinVerify(widget.email, _pinTEController.text));
+     log(response.isSuccess.toString());
+     if(response.isSuccess){
+       _pinInProgress=false;
+       if(mounted){
+         setState(() {});
+       }
+       Navigator.push(TaskManager.navigatorKey.currentContext!, MaterialPageRoute(builder: (context)=>SetPasswordScreen()));
+     }
+   }
 }

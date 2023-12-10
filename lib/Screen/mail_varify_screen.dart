@@ -19,9 +19,8 @@ class MailVerifyScreen extends StatefulWidget {
 }
 
 class _MailVerifyScreenState extends State<MailVerifyScreen> {
-  UserModel userModel=UserModel();
   final TextEditingController _emailVerifyTEC=TextEditingController();
-
+ bool _mailverifyInProgress=false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -54,12 +53,16 @@ class _MailVerifyScreenState extends State<MailVerifyScreen> {
                   SizedBox(
                       width: double.infinity,
                       height: 45,
-                      child: ElevatedButton(
-                          onPressed: () {
-                            mailVerify();
-                          },
-                          child:
-                              const Icon(Icons.arrow_circle_right_outlined))),
+                      child: Visibility(
+                        visible: _mailverifyInProgress==false,
+                        replacement: const Center(child: CircularProgressIndicator()),
+                        child: ElevatedButton(
+                            onPressed: () {
+                              mailVerify();
+                            },
+                            child:
+                                const Icon(Icons.arrow_circle_right_outlined)),
+                      )),
                   const SizedBox(
                     height: 30,
                   ),
@@ -82,12 +85,19 @@ class _MailVerifyScreenState extends State<MailVerifyScreen> {
     );
   }
   Future<void>mailVerify()async{
-
+    _mailverifyInProgress=true;
+    if(mounted){
+      setState(() {});
+    }
       NetworkResponse response = await NetworkCaller().getRequest(Urls.verifyMail(_emailVerifyTEC.text.trim()));
       log(response.isSuccess.toString());
     if(response.isSuccess){
      AuthController().updateProfileInfo(UserModel.fromJson(response.jsonResponse!));
-       Navigator.push(TaskManager.navigatorKey.currentContext!, MaterialPageRoute(builder: (context)=>const PinVerifyScreen()));
+     _mailverifyInProgress=false;
+     if(mounted){
+       setState(() {});
+     }
+       Navigator.push(TaskManager.navigatorKey.currentContext!, MaterialPageRoute(builder: (context)=> PinVerifyScreen(email: _emailVerifyTEC.text,)));
     }
   }
 }

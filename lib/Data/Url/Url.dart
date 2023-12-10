@@ -1,3 +1,4 @@
+import 'package:m12_task_manager_api/Data/pojo_model_class/user_model.dart';
 import 'package:m12_task_manager_api/Widget/CardViewItem.dart';
 
 class Urls {
@@ -12,6 +13,7 @@ class Urls {
   static  String cancelledTask= '$baseUrl/listTaskByStatus/${UpdateTaskEn.Cancelled.name}';
   static  String deleteTask(String sId)=> '$baseUrl/deleteTask/$sId';
   static  String verifyMail(String value)=> '$baseUrl/RecoverVerifyEmail/$value';
+  static  String pinVerify(String model,String value)=> '$baseUrl/RecoverVerifyOTP/$model/$value';
 
   static updateTaskLink(String sID,String enValue)=> '$baseUrl/updateTaskStatus/$sID/$enValue';
   static const String updateProfile= '$baseUrl/profileUpdate';
