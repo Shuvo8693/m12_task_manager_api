@@ -1,4 +1,4 @@
-import 'package:m12_task_manager_api/Data/pojo_model_class/user_model.dart';
+
 import 'package:m12_task_manager_api/Widget/CardViewItem.dart';
 
 class Urls {
@@ -7,14 +7,14 @@ class Urls {
   static const String logIn= '$baseUrl/login';
   static const String createTask= '$baseUrl/createTask';
   static const String countTask= '$baseUrl/taskStatusCount';
-  static  String newTaskStatus= '$baseUrl/listTaskByStatus/${UpdateTaskEn.New.name}';
+  static  String newTaskStatus= '$baseUrl/listTaskByStatus/${UpdateTaskEn.New.name}';  // updateTaskStatus link er data ei link e generate hoy ,ei link thekei data fetch korte hoy
   static  String progressTask= '$baseUrl/listTaskByStatus/${UpdateTaskEn.Progress.name}';
   static  String completedTask= '$baseUrl/listTaskByStatus/${UpdateTaskEn.Completed.name}';
   static  String cancelledTask= '$baseUrl/listTaskByStatus/${UpdateTaskEn.Cancelled.name}';
   static  String deleteTask(String sId)=> '$baseUrl/deleteTask/$sId';
   static  String verifyMail(String value)=> '$baseUrl/RecoverVerifyEmail/$value';
   static  String pinVerify(String model,String value)=> '$baseUrl/RecoverVerifyOTP/$model/$value';
-
+  static const String resetPassword= '$baseUrl/RecoverResetPass';
   static updateTaskLink(String sID,String enValue)=> '$baseUrl/updateTaskStatus/$sID/$enValue';
   static const String updateProfile= '$baseUrl/profileUpdate';
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:m12_task_manager_api/Data/Auth_Controller/auth_controller.dart';
 import 'package:m12_task_manager_api/Screen/main_bottomNavBar_screen.dart';
 import '../Widget/background_picture.dart';
@@ -15,9 +16,8 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
 
   Future<void> gotoLogin() async {
-  final bool isLogin =await AuthController().authCheck();
-    Future.delayed(const Duration(seconds: 2)).then((value) => Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (context) =>isLogin ? const BottomNavBar():const LoginScreen())));
+  final bool isLogin =await Get.find<AuthController>().authCheck();
+    Future.delayed(const Duration(seconds: 2)).then((value) =>Get.off(isLogin ? const BottomNavBar():const LoginScreen()));
   }
 
   @override

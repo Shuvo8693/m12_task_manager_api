@@ -1,10 +1,11 @@
+
 class TaskListModal {
   String? status;
   List<TaskList>? task;
-///Pojo class use kori cuz api theke kono kicu get korle seta ei pojo class er maddhomei link kore show korai
+///Pojo class use kori cuz api theke kono kicu get korle seta ei pojo class er maddhomei link kore show kora hoy Ui te.
   TaskListModal({this.status, this.task});
 
-  TaskListModal.fromJson(Map<String, dynamic> json) {
+  TaskListModal.fromJson(Map<String, dynamic> json){
     status = json['status'];
     if (json['data'] != null) {
       task = <TaskList>[];
@@ -41,7 +42,7 @@ class TaskList {
     createdDate = json['createdDate'];
   }
 
-  Map<String, dynamic> toJson() {
+  Map<String, dynamic> toJson(){
     final Map<String, dynamic> data = <String, dynamic>{};
     data['_id'] = sId;
     data['title'] = title;

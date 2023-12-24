@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:m12_task_manager_api/Data/Auth_Controller/auth_controller.dart';
+import 'package:m12_task_manager_api/Data/Controllers/logIn_Controller.dart';
 import 'package:m12_task_manager_api/Data/NetWorkCaller/NetworkResponse.dart';
 import 'package:m12_task_manager_api/Data/NetWorkCaller/network_caller.dart';
 import 'package:m12_task_manager_api/Data/Url/Url.dart';
@@ -22,7 +24,8 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailTEC=TextEditingController();
   final TextEditingController _passwordTEC=TextEditingController();
   final GlobalKey<FormState>_formKey=GlobalKey<FormState>();
- bool loginProgress=false;
+
+ final LoginController _loginController= Get.find<LoginController>();
 
   @override
   Widget build(BuildContext context) {
@@ -79,13 +82,17 @@ class _LoginScreenState extends State<LoginScreen> {
                     SizedBox(
                         width: double.infinity,
                         height: 45,
-                        child: Visibility(
-                          visible: !loginProgress,
-                          replacement: const Center(child: CircularProgressIndicator()),
-                          child: ElevatedButton(
-                              onPressed: signIn,
-                              child:
-                                  const Icon(Icons.arrow_circle_right_outlined)),
+                        child: GetBuilder<LoginController>(
+                          builder: (loginController) {
+                            return Visibility(
+                              visible: !loginController.logInProgress,
+                              replacement: const Center(child: CircularProgressIndicator()),
+                              child: ElevatedButton(
+                                  onPressed: signIn,
+                                  child:
+                                      const Icon(Icons.arrow_circle_right_outlined)),
+                            );
+                          }
                         )),
                     const SizedBox(
                       height: 30,
@@ -122,34 +129,14 @@ class _LoginScreenState extends State<LoginScreen> {
     if(!_formKey.currentState!.validate()){  /// not validate jodi true hoy then
       return;      ///  ekhane null return korbe ,then next codding e agabena, next coding e block of code else rakhleo expected condition apply hobe.
     }
-    loginProgress=true;
-    if(mounted){
-      setState(() {});
-    }
-    NetworkResponse netResponse= await NetworkCaller().postRequest(Urls.logIn, body: {
-      "email":_emailTEC.text.trim(),
-      "password":_passwordTEC.text},
-      isLogIn: true,
-    );
-    loginProgress=false;
-    if(mounted){
-      setState(() {});
-    }
-    if(netResponse.isSuccess){
+    final netResponse= await _loginController.getToSignIn(_emailTEC.text.trim(), _passwordTEC.text);
+    if(netResponse){
       clearField();
-     await AuthController().saveUserInfo(netResponse.jsonResponse!['token'],  // await dear reason: ekhane api respone complete na hoa porjonto next code e jabe na. eta na dele screen eduke loading hota thake or back kore login e chole ashe
-             UserModel.fromJson(netResponse.jsonResponse!['data']));
-      if(mounted) {
-        Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => const BottomNavBar()));
-      }
+      Get.off(const BottomNavBar());
     }else{
       if(mounted) {
-        if (netResponse.statusCode == 401) {
-          snackMessage(context, 'Enter Valid Email Or Password', true);
-        }else{
-          snackMessage(context, 'Unknown error');
-        }
+        snackMessage(context,_loginController.failureMessage, true);
+
       }
     }
   }
@@ -161,7 +148,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void dispose() {
     super.dispose();
-    _emailTEC.clear();
-    _passwordTEC.clear();
+    _emailTEC.dispose();
+    _passwordTEC.dispose();
   }
 }

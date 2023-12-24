@@ -1,11 +1,8 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-
-import '../../Data/NetWorkCaller/NetworkResponse.dart';
-import '../../Data/NetWorkCaller/network_caller.dart';
-import '../../Data/Url/Url.dart';
-import '../../Data/pojo_model_class/TaskListModal.dart';
+import 'package:get/get.dart';
+import 'package:m12_task_manager_api/Data/Controllers/completed_controller.dart';
 import '../../Widget/CardViewItem.dart';
 import '../../Widget/Profile_summery.dart';
 
@@ -17,31 +14,12 @@ class Completed extends StatefulWidget {
 }
 
 class _CompletedState extends State<Completed> {
-  bool completedInProgress = false;
-  TaskListModal taskListModel =
-      TaskListModal(); //only this is for global use variable
-
-  Future<void> completedTaskStatusList() async {
-    completedInProgress = true;
-    if (mounted) {
-      setState(() {});
-    }
-    final NetworkResponse response =
-        await NetworkCaller().getRequest(Urls.completedTask);
-    log(response.statusCode.toString());
-    completedInProgress = false;
-    if (mounted) {
-      setState(() {});
-    }
-    if (response.isSuccess) {
-      taskListModel = TaskListModal.fromJson(response.jsonResponse!);
-    }
-  }
+ CompletedController completedController=Get.find<CompletedController>();
 
   @override
   void initState() {
     super.initState();
-    completedTaskStatusList();
+    completedController.completedTaskStatusList();
   }
 
   @override
@@ -52,26 +30,30 @@ class _CompletedState extends State<Completed> {
         children: [
           const ProfileSummary(),
           Expanded(
-            child: Visibility(
-              visible: !completedInProgress,
-              replacement: const Center(child: CircularProgressIndicator()),
-              child: ListView.builder(
-                itemBuilder: (context, index) {
-                  return CardViewItem(
-                    taskList: taskListModel.task![index],
-                    getUpdateScreen: () {
-                      completedTaskStatusList();
+            child: GetBuilder<CompletedController>(
+              builder: (completedContr) {
+                return Visibility(
+                  visible: !completedContr.completedInProgress,
+                  replacement: const Center(child: CircularProgressIndicator()),
+                  child: ListView.builder(
+                    itemBuilder: (context, index) {
+                      return CardViewItem(
+                        taskList: completedContr.taskListModel.task![index],
+                        getUpdateScreen: () {
+                          completedContr.completedTaskStatusList();
+                        },
+                       /* taskInProgress: (bool inProgress) {
+                          completedInProgress= inProgress;
+                          if(mounted){
+                            setState(() {});
+                          }
+                        },*/ updateCountScreen: () {null;  },
+                      );
                     },
-                    taskInProgress: (bool inProgress) {
-                      completedInProgress= inProgress;
-                      if(mounted){
-                        setState(() {});
-                      }
-                    }, updateCountScreen: () {null;  },
-                  );
-                },
-                itemCount: taskListModel.task?.length??0,
-              ),
+                    itemCount: completedContr.taskListModel.task?.length??0,
+                  ),
+                );
+              }
             ),
           ),
         ],

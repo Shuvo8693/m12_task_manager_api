@@ -1,21 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:m12_task_manager_api/Data/Controllers/newTaskStatus_Controller.dart';
+import 'package:m12_task_manager_api/Data/Controllers/progress_controller.dart';
 import 'package:m12_task_manager_api/Data/NetWorkCaller/network_caller.dart';
 import 'package:m12_task_manager_api/Data/Url/Url.dart';
 import 'package:m12_task_manager_api/Data/pojo_model_class/TaskListModal.dart';
+
+import '../Data/Controllers/completed_controller.dart';
 
 enum UpdateTaskEn { New, Progress, Completed, Cancelled }  // ei parameter e link generate hoice
 
 class CardViewItem extends StatefulWidget {
   const CardViewItem({
     super.key,
-    required this.taskList,
-    required this.getUpdateScreen,
-    required this.taskInProgress, required this.updateCountScreen,
+    required this.updateCountScreen, required this.taskList, required this.getUpdateScreen,
   });
 
   final TaskList taskList;
   final VoidCallback getUpdateScreen,updateCountScreen;
-  final Function(bool) taskInProgress;
 
   @override
   State<CardViewItem> createState() => _CardViewItemState();
@@ -27,15 +30,16 @@ class CardViewItem extends StatefulWidget {
 /// sei data "ListTaskByStatus" api link e thake sekhan theke fetch/get kore ana hoy
 
 class _CardViewItemState extends State<CardViewItem> {
+  NewTaskStatusController newTaskStatusController=Get.find<NewTaskStatusController>();
+ ProgressController progressController =Get.find<ProgressController>();
+
   Future<void> updateTaskRequest(String enValue) async {
-    widget.taskInProgress(true);
-    final response = await NetworkCaller()
-        .getRequest(Urls.updateTaskLink(widget.taskList.sId ?? '', enValue)); // ei parameter name e link generate hoy, sety get kora hoy other class/screen er jonno
+    final response = await NetworkCaller().getRequest(Urls.updateTaskLink(widget.taskList.sId ?? '', enValue)); // e.name  e value set kora ache niche
+    // ei parameter name e link generate hoy, sety get kora hoy other class/screen er jonno & Current Screen e seta thake na ,oy link e data save thake
     if (response.isSuccess) {
-      widget.getUpdateScreen();
+      widget.getUpdateScreen(); //recall the function for update after moving data on-screen to Another Screen
       widget.updateCountScreen();
     }
-    widget.taskInProgress(false);
   }
 
   Future<void> deleteTask() async {
@@ -102,15 +106,15 @@ class _CardViewItemState extends State<CardViewItem> {
     );
   }
 
-  void updateTaskStatus(BuildContext context) {
-    List<ListTile> lisTileItem = UpdateTaskEn.values
-        .map(
-          (e) => ListTile(
+  void updateTaskStatus(BuildContext context){
+    List<ListTile> lisTileItem = UpdateTaskEn.values.map((e) => ListTile(
               title: Text(e.name),
               onTap: () {
-                updateTaskRequest(e.name);
-                widget.updateCountScreen();
+                updateTaskRequest(e.name); // enValue ta ekhane dea hoice
+                widget.updateCountScreen(); // update with tab
                 widget.getUpdateScreen();
+                progressController.progressTaskStatusList();
+                Get.find<CompletedController>().completedTaskStatusList();
                 Navigator.pop(context);
               }),
         ).toList();

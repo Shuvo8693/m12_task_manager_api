@@ -1,13 +1,9 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:m12_task_manager_api/Data/Auth_Controller/auth_controller.dart';
-import 'package:m12_task_manager_api/Data/NetWorkCaller/NetworkResponse.dart';
-import 'package:m12_task_manager_api/Data/NetWorkCaller/network_caller.dart';
-import 'package:m12_task_manager_api/Data/Url/Url.dart';
-import 'package:m12_task_manager_api/Data/pojo_model_class/user_model.dart';
+import 'package:get/get.dart';
+import 'package:m12_task_manager_api/Data/Controllers/mailVerify_Controller.dart';
 import 'package:m12_task_manager_api/Screen/pin_varify_screen.dart';
-import 'package:m12_task_manager_api/main.dart';
 import '../Widget/background_picture.dart';
 import 'login_screen.dart';
 
@@ -19,8 +15,8 @@ class MailVerifyScreen extends StatefulWidget {
 }
 
 class _MailVerifyScreenState extends State<MailVerifyScreen> {
-  final TextEditingController _emailVerifyTEC=TextEditingController();
- bool _mailverifyInProgress=false;
+  final TextEditingController _emailVerifyTEC = TextEditingController();
+ final GlobalKey<FormState>_formKey= GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,53 +26,67 @@ class _MailVerifyScreenState extends State<MailVerifyScreen> {
           padding: const EdgeInsets.all(25),
           child: Center(
             child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Your Email Address',
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                  const SizedBox(
-                    height: 30,
-                  ),
-                  TextFormField(
-                    controller: _emailVerifyTEC,
-                    keyboardType: TextInputType.emailAddress,
-                    decoration: const InputDecoration(
-                      hintText: 'Email',
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Your Email Address',
+                      style: Theme.of(context).textTheme.titleLarge,
                     ),
-                  ),
-                  const SizedBox(
-                    height: 25,
-                  ),
-                  SizedBox(
-                      width: double.infinity,
-                      height: 45,
-                      child: Visibility(
-                        visible: _mailverifyInProgress==false,
-                        replacement: const Center(child: CircularProgressIndicator()),
-                        child: ElevatedButton(
+                    const SizedBox(
+                      height: 30,
+                    ),
+                    TextFormField(
+                      controller: _emailVerifyTEC,
+                      keyboardType: TextInputType.emailAddress,
+                      decoration: const InputDecoration(
+                        hintText: 'Email',
+                      ),
+                      validator: (String? value){
+                        if(value?.trim().isEmpty??true){
+                          return 'Enter Valid Email';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(
+                      height: 25,
+                    ),
+                    SizedBox(
+                        width: double.infinity,
+                        height: 45,
+                        child: GetBuilder<MailVerifyController>(
+                            builder: (mailVerifyController) {
+                          return mailVerifyController.mailverifyInProgress
+                              ? const Center(child: CircularProgressIndicator())
+                              : ElevatedButton(
+                                  onPressed: () {
+                                    mailVerify();
+                                  },
+                                  child: const Icon(
+                                      Icons.arrow_circle_right_outlined));
+                        })),
+                    const SizedBox(
+                      height: 30,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text(" Have Account ?"),
+                        TextButton(
                             onPressed: () {
-                              mailVerify();
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => const LoginScreen()));
                             },
-                            child:
-                                const Icon(Icons.arrow_circle_right_outlined)),
-                      )),
-                  const SizedBox(
-                    height: 30,
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text(" Have Account ?"),
-                      TextButton(
-                          onPressed: () {
-                            Navigator.push(context, MaterialPageRoute(builder: (context)=>const LoginScreen()));
-                          }, child: const Text('Sign In')),
-                    ],
-                  ),
-                ],
+                            child: const Text('Sign In')),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -84,20 +94,14 @@ class _MailVerifyScreenState extends State<MailVerifyScreen> {
       )),
     );
   }
-  Future<void>mailVerify()async{
-    _mailverifyInProgress=true;
-    if(mounted){
-      setState(() {});
+
+  Future<void> mailVerify() async {
+    if(!_formKey.currentState!.validate()){
+      return;
     }
-      NetworkResponse response = await NetworkCaller().getRequest(Urls.verifyMail(_emailVerifyTEC.text.trim()));
-      log(response.isSuccess.toString());
-    if(response.isSuccess){
-     AuthController().updateProfileInfo(UserModel.fromJson(response.jsonResponse!));
-     _mailverifyInProgress=false;
-     if(mounted){
-       setState(() {});
-     }
-       Navigator.push(TaskManager.navigatorKey.currentContext!, MaterialPageRoute(builder: (context)=> PinVerifyScreen(email: _emailVerifyTEC.text,)));
+    final response = await Get.find<MailVerifyController>().mailVerify(_emailVerifyTEC.text.trim());
+    if (response){
+      Get.to(() => PinVerifyScreen(email: _emailVerifyTEC.text.trim())); // i can also put it TEController into GetX to use it another class
     }
   }
 }

@@ -1,6 +1,9 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:m12_task_manager_api/Data/Controllers/countStatus_Controller.dart';
+import 'package:m12_task_manager_api/Data/Controllers/newTaskStatus_Controller.dart';
 import 'package:m12_task_manager_api/Data/NetWorkCaller/NetworkResponse.dart';
 import 'package:m12_task_manager_api/Data/NetWorkCaller/network_caller.dart';
 import 'package:m12_task_manager_api/Data/Url/Url.dart';
@@ -21,55 +24,14 @@ class NewTask extends StatefulWidget {
 }
 
 class _NewTaskState extends State<NewTask> {
-  bool taskInProgress = false;
-  bool countInProgress = false;
-  TaskListModal taskListModel =
-      TaskListModal(); //only this is for global use variable
-  CountStatus countStatus = CountStatus();
-
-  Future<void> newTaskStatusList() async {
-    taskInProgress = true;
-    if (mounted) {
-      setState(() {});
-    }
-    final NetworkResponse response =
-        await NetworkCaller().getRequest(Urls.newTaskStatus);
-    log(response.statusCode.toString());
-    taskInProgress = false;
-    if (mounted) {
-      setState(() {});
-    }
-    if (response.isSuccess) {
-      taskListModel = TaskListModal.fromJson(response.jsonResponse!);
-    }else if(response.statusCode==401){
-      Navigator.pushReplacement(TaskManager.navigatorKey.currentContext!, MaterialPageRoute(builder: (context)=>LoginScreen()));
-    }
-  }
-
-  Future<void> countTaskStatus() async {
-    countInProgress = true;
-    if (mounted) {
-      setState(() {});
-    }
-    final NetworkResponse response =
-        await NetworkCaller().getRequest(Urls.countTask);
-    log(response.statusCode.toString());
-
-    if (response.isSuccess) {
-      countStatus = CountStatus.fromJson(response.jsonResponse!);
-      print(countStatus.status);
-    }
-    countInProgress = false;
-    if (mounted) {
-      setState(() {});
-    }
-  }
+  NewTaskStatusController newTaskStatusController=Get.find<NewTaskStatusController>();
+  final CountStatusController _countStatusController =Get.find<CountStatusController>();
 
   @override
   void initState() {
     super.initState();
-    newTaskStatusList();
-    countTaskStatus();
+   newTaskStatusController.newTaskStatusList();
+    _countStatusController.countTaskStatus();
   }
 
   @override
@@ -79,44 +41,49 @@ class _NewTaskState extends State<NewTask> {
         child: Column(
           children: [
             const ProfileSummary(),
-            Visibility(
-              visible: countInProgress == false &&
-                  (countStatus.countVariable?.isNotEmpty ?? false),
-              replacement: const LinearProgressIndicator(),
-              child: SizedBox(
-                height: 110,
-                child: ListView.builder(
-                  itemBuilder: (context, index) {
-                    final status = countStatus.countVariable?[index];
-                    return CardSummary(
-                      count: status!.sum.toString(),
-                      title: status.sId ?? '',
-                    );
-                  },
-                  scrollDirection: Axis.horizontal,
-                  itemCount: countStatus.countVariable?.length,
-                ),
-              ),
+            GetBuilder<CountStatusController>(
+              builder: (countStatusController) {
+                return Visibility(
+                  visible: countStatusController.countInProgress == false &&
+                      (countStatusController.countStatus.countVariable?.isNotEmpty ?? false),
+                  replacement: const LinearProgressIndicator(),
+                  child: SizedBox(
+                    height: 110,
+                    child: ListView.builder(
+                      itemBuilder: (context, index) {
+                        final status = countStatusController.countStatus.countVariable?[index];
+                        return CardSummary(
+                          count: status!.sum.toString(),
+                          title: status.sId ?? '',
+                        );
+                      },
+                      scrollDirection: Axis.horizontal,
+                      itemCount: countStatusController.countStatus.countVariable?.length,
+                    ),
+                  ),
+                );
+              }
             ),
             Expanded(
-              child: Visibility(
-                visible: !taskInProgress,
-                replacement: const Center(child: CircularProgressIndicator()),
-                child: ListView.builder(
-                  itemBuilder: (context, index) {
-                    return CardViewItem(
-                      taskList: taskListModel.task![index],
-                      getUpdateScreen: newTaskStatusList,
-                      taskInProgress: (bool inProgress) {
-                        taskInProgress = inProgress;
-                        if(mounted){
-                          setState(() {});
-                        }
-                      }, updateCountScreen: countTaskStatus,
-                    );
-                  },
-                  itemCount: taskListModel.task?.length ?? 0,
-                ),
+              child: GetBuilder<NewTaskStatusController>(
+                builder: (taskStatusController) {
+                  return Visibility(
+                    visible: taskStatusController.taskInProgress==false,
+                    replacement: const Center(child: CircularProgressIndicator()),
+                    child: ListView.builder(
+                      itemBuilder: (context, index) {
+                        return CardViewItem(
+                          updateCountScreen: _countStatusController.countTaskStatus,
+                          taskList: taskStatusController.taskListModel.task![index],
+                          getUpdateScreen: () {
+                            newTaskStatusController.newTaskStatusList();
+                          },
+                        );
+                      },
+                      itemCount: newTaskStatusController.taskListModel.task?.length ?? 0,
+                    ),
+                  );
+                }
               ),
             ),
           ],

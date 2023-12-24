@@ -1,5 +1,7 @@
 
 import 'package:flutter/material.dart';
+import 'package:get/get_state_manager/src/simple/get_state.dart';
+import 'package:m12_task_manager_api/Data/Controllers/signUp_Controller.dart';
 import 'package:m12_task_manager_api/Data/NetWorkCaller/NetworkResponse.dart';
 import 'package:m12_task_manager_api/Data/NetWorkCaller/network_caller.dart';
 import 'package:m12_task_manager_api/Data/Url/Url.dart';
@@ -22,7 +24,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController _phoneNulTEC = TextEditingController();
   final TextEditingController _passWordTEC = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  bool _inProgress = false;
+
 
   @override
   Widget build(BuildContext context) {
@@ -128,13 +130,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     SizedBox(
                         width: double.infinity,
                         height: 45,
-                        child:  Visibility( /// visible true hola ,replacement widget Show kora, ar visible false thakle child show kore.
-                          visible: _inProgress==false,
-                          replacement: const Center(child: CircularProgressIndicator()),
-                          child: ElevatedButton(
-                                  onPressed: signUp, //<-----
-                                  child: const Icon(
-                                      Icons.arrow_circle_right_outlined)),
+                        child:  GetBuilder<SignUpController>(
+                          builder: (signUpController) {
+                            return Visibility( /// visible true hola ,replacement widget Show kora, ar visible false thakle child show kore.
+                              visible: signUpController.inProgress==false,
+                              replacement: const Center(child: CircularProgressIndicator()),
+                              child: ElevatedButton(
+                                      onPressed: signUp, //<-----
+                                      child: const Icon(
+                                          Icons.arrow_circle_right_outlined)),
+                            );
+                          }
                         )),
                     const SizedBox(
                       height: 30,
@@ -166,38 +172,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   Future<void> signUp() async {
     if (_formKey.currentState!.validate()) {
-      _inProgress = true;
-      if (mounted) {
-        setState(() {});
-      }
-      NetworkResponse response =
-          await NetworkCaller().postRequest(Urls.registration, body: {
-        "email": _emailTEC.text.trim(),
-        "firstName": _firstNameTEC.text.trim(),
-        "lastName": _lastNameTEC.text.trim(),
-        "mobile": _phoneNulTEC.text.trim(),
-        "password": _passWordTEC.text,
-        "photo": ""
-      });
-      _inProgress = false;
-      if (mounted) {
-        setState(() {});
-      }
-      if (response.isSuccess) {
+     final response= await SignUpController().signUp(
+         _emailTEC.text.trim(),
+         _firstNameTEC.text.trim(),
+         _lastNameTEC.text.trim(),
+         _phoneNulTEC.text.trim(),
+         _passWordTEC.text);
+      if (response) {
         _clearField();
         if (mounted) {
           // mounted reason hocce ei toast message onno screen e show korbe na only ei screen porjonto thakbe.
-          snackMessage(
-              context, 'Your Account Has been Created, Please Sign in');
+          snackMessage(context, SignUpController().failureMessage);
         }
         Navigator.push(TaskManager.navigatorKey.currentContext!, MaterialPageRoute(builder: (context)=>const LoginScreen()));
-      } else {
-        if (mounted) {
-          snackMessage(
-              context,
-              'Your Account Creation Has been Failed, please Try again !',
-              true);
-        }
       }
     }
   }

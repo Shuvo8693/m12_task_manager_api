@@ -1,17 +1,10 @@
-
-
 import 'dart:convert';
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:m12_task_manager_api/Data/Auth_Controller/auth_controller.dart';
-import 'package:m12_task_manager_api/Data/NetWorkCaller/NetworkResponse.dart';
-import 'package:m12_task_manager_api/Data/NetWorkCaller/network_caller.dart';
-import 'package:m12_task_manager_api/Data/Url/Url.dart';
-import 'package:m12_task_manager_api/Data/pojo_model_class/user_model.dart';
-
+import 'package:m12_task_manager_api/Data/Controllers/userProfileController.dart';
 import '../Widget/Profile_summery.dart';
 import '../Widget/background_picture.dart';
 
@@ -23,24 +16,20 @@ class UserProfile extends StatefulWidget {
 }
 
 class _UserProfileState extends State<UserProfile> {
-  final TextEditingController _emailTEController = TextEditingController();
-  final TextEditingController _firstNameTEController = TextEditingController();
-  final TextEditingController _lastNameTEController = TextEditingController();
-  final TextEditingController _phoneNumberTEController = TextEditingController();
-  final TextEditingController _passWordTEController = TextEditingController();
-
- final GlobalKey<FormState>_formKey=GlobalKey<FormState>();
-
+  UserProfileController userProfileController =
+      Get.find<UserProfileController>();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  AuthController authController = Get.find<AuthController>();
   @override
   void initState() {
     super.initState();
-    _emailTEController.text = AuthController.user.value?.email ?? '';
-    _firstNameTEController.text = AuthController.user.value?.firstName ?? '';
-    _lastNameTEController.text = AuthController.user.value?.lastName ?? '';
-    _phoneNumberTEController.text = AuthController.user.value?.mobile ?? '';
+    userProfileController.emailTEController.text = authController.user?.email ?? '';
+    userProfileController.firstNameTEController.text = authController.user?.firstName ?? '';
+    userProfileController.lastNameTEController.text = authController.user?.lastName ?? '';
+    userProfileController.phoneNumberTEController.text = authController.user?.mobile ?? '';
   }
-   XFile? photo;
-  bool _profileInProgress=false;
+
+  XFile? photo;
 
   @override
   Widget build(BuildContext context) {
@@ -82,15 +71,18 @@ class _UserProfileState extends State<UserProfile> {
                                   height: 55,
                                   color: Colors.black26,
                                   child: IconButton(
-                                      onPressed: ()async {
-                                        XFile? image= await ImagePicker().pickImage(source: ImageSource.gallery,imageQuality: 60);
-                                       if(image!=null){
-                                         photo=image;
-                                         if(mounted){
-                                           setState(() {});
-                                         }
-                                       }
-                                        },
+                                      onPressed: () async {
+                                        XFile? image = await ImagePicker()
+                                            .pickImage(
+                                                source: ImageSource.gallery,
+                                                imageQuality: 60);
+                                        if (image != null) {
+                                          photo = image;
+                                          if (mounted) {
+                                            setState(() {});
+                                          }
+                                        }
+                                      },
                                       icon: const Icon(
                                         Icons.camera_alt_outlined,
                                         size: 35,
@@ -102,10 +94,17 @@ class _UserProfileState extends State<UserProfile> {
                                 child: Container(
                                   height: 55,
                                   color: Colors.white,
-                                  child:  Visibility(
-                                     visible: photo==null,
-                                      replacement: Center(child: Text(photo?.name??'')) ,
-                                      child: Center(child: Text('Take a Picture',style: Theme.of(context).textTheme.titleMedium,))),
+                                  child: Visibility(
+                                      visible: photo == null,
+                                      replacement: Center(
+                                          child: Text(photo?.name ?? '')),
+                                      child: Center(
+                                          child: Text(
+                                        'Take a Picture',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleMedium,
+                                      ))),
                                 ),
                               ),
                             ],
@@ -115,66 +114,75 @@ class _UserProfileState extends State<UserProfile> {
                           height: 12,
                         ),
                         TextFormField(
-                          controller: _emailTEController,
+                          controller: userProfileController.emailTEController,
                           keyboardType: TextInputType.emailAddress,
                           decoration: const InputDecoration(
                             hintText: 'Email',
                           ),
-                          validator: (String? value){
-                            if(value?.trim().isEmpty??true){
+                          validator: (String? value) {
+                            if (value?.trim().isEmpty ?? true) {
                               return 'Enter your mail';
-                            }return null;
+                            }
+                            return null;
                           },
                         ),
                         const SizedBox(
                           height: 12,
                         ),
                         TextFormField(
-                          controller: _firstNameTEController,
+                          controller:
+                              userProfileController.firstNameTEController,
                           keyboardType: TextInputType.emailAddress,
                           decoration: const InputDecoration(
                             hintText: 'First Name',
                           ),
-                          validator: (String? value){
-                            if(value?.trim().isEmpty??true){
+                          validator: (String? value) {
+                            if (value?.trim().isEmpty ?? true) {
                               return 'Enter your first name';
-                            }return null;
+                            }
+                            return null;
                           },
                         ),
                         const SizedBox(
                           height: 12,
                         ),
                         TextFormField(
-                          controller: _lastNameTEController,
+                          controller:
+                              userProfileController.lastNameTEController,
                           keyboardType: TextInputType.emailAddress,
                           decoration: const InputDecoration(
                             hintText: 'Last Name',
                           ),
-                          validator: (String? value){
-                            if(value?.trim().isEmpty??true){
+                          validator: (String? value) {
+                            if (value?.trim().isEmpty ?? true) {
                               return 'Enter your last name';
-                            }return null;
+                            }
+                            return null;
                           },
                         ),
                         const SizedBox(
                           height: 12,
                         ),
                         TextFormField(
-                          controller: _phoneNumberTEController,
+                          controller:
+                              userProfileController.phoneNumberTEController,
                           keyboardType: TextInputType.phone,
                           decoration: const InputDecoration(
                             hintText: 'Phone Number',
                           ),
-                          validator: (String? value){
-                            if(value?.trim().isEmpty??true){
+                          validator: (String? value) {
+                            if (value?.trim().isEmpty ?? true) {
                               return 'Enter your phone number';
-                            }return null;
+                            }
+                            return null;
                           },
                         ),
                         const SizedBox(
                           height: 12,
                         ),
                         TextFormField(
+                          controller:
+                              userProfileController.passWordTEController,
                           obscureText: true,
                           keyboardType: TextInputType.text,
                           decoration: const InputDecoration(
@@ -187,17 +195,18 @@ class _UserProfileState extends State<UserProfile> {
                         SizedBox(
                             width: double.infinity,
                             height: 45,
-                            child: Visibility(
-                              visible: _profileInProgress==false,
-                              replacement: const Center(child: CircularProgressIndicator()),
-                              child: ElevatedButton(
-                                  onPressed: () {
-                                    updateProfile();
-                                    /*Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=> null), (route) => false);*/
-                                  },
-                                  child: const Icon(
-                                      Icons.arrow_circle_right_outlined)),
-                            )),
+                            child: GetBuilder<UserProfileController>(
+                                builder: (userController) {
+                              return userController.profileInProgress
+                                  ? const Center(child: CircularProgressIndicator())
+                                  : ElevatedButton(
+                                      onPressed: () {
+                                        updateProfile();
+                                        /*Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context)=> null), (route) => false);*/
+                                      },
+                                      child: const Icon(
+                                          Icons.arrow_circle_right_outlined));
+                            })),
                         const SizedBox(
                           height: 30,
                         ),
@@ -214,49 +223,17 @@ class _UserProfileState extends State<UserProfile> {
   }
 
   Future<void> updateProfile() async {
-   /* if(_formKey.currentState!.validate()){
-      return;
-    } */
-    _profileInProgress=true;
-    if(mounted){
-      setState(() {});
-    }
-    String? photoInBase64;
-    Map<String, dynamic> profileData = {
-      "email": _emailTEController.text.trim(),
-      "firstName": _firstNameTEController.text.trim(),
-      "lastName": _lastNameTEController.text.trim(),
-      "mobile": _phoneNumberTEController.text.trim(),
+    if (_formKey.currentState!.validate()) {
 
-    };
-   if(_passWordTEController.text.isNotEmpty){
-     profileData['password']= _passWordTEController.text;
-   }
+      String? photoInBase64;
 
-    if(photo!=null){
-      List<int> photoBytes= await photo!.readAsBytes();
-      photoInBase64= base64Encode(photoBytes);
-      profileData['photo']= photoInBase64; // photo ta server e encode kore send kore dessi
-    }
+      if (photo != null) {
+        List<int> photoBytes = await photo!.readAsBytes();
+        photoInBase64 = base64Encode(photoBytes);
+        userProfileController.photoInController = photoInBase64; // photo ta server e encode kore send kore dessi
 
-    NetworkResponse response = await NetworkCaller()
-        .postRequest(Urls.updateProfile, body: profileData);
-
-
-
-    if(response.isSuccess){
-     await AuthController().updateProfileInfo(UserModel(
-        email: _emailTEController.text.trim(),
-        firstName: _firstNameTEController.text.trim(),
-        lastName: _lastNameTEController.text.trim(),
-        mobile: _phoneNumberTEController.text.trim(),
-        photo: photoInBase64 ?? AuthController.user.value?.photo??''  // ekhane local cache e rakha hocce cuz use picture from modal
-      ));
-    }
-
-    _profileInProgress=false;
-    if(mounted){
-      setState(() {});
+        Get.find<UserProfileController>().updateProfile();
+      }
     }
   }
 }

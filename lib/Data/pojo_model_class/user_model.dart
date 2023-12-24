@@ -1,4 +1,5 @@
-
+//Ei model class ta AuthController e use kora hoy ,
+// AuthController theke Authentication kora hoy bivinno class/Screen e And Ui te data Show kora hoy.
 class UserModel {
   String? email;
   String? firstName;

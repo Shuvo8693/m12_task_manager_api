@@ -1,6 +1,8 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:m12_task_manager_api/Data/Controllers/canceled_controller.dart';
 
 import '../../Data/NetWorkCaller/NetworkResponse.dart';
 import '../../Data/NetWorkCaller/network_caller.dart';
@@ -17,31 +19,12 @@ class Canceled extends StatefulWidget {
 }
 
 class _CanceledState extends State<Canceled> {
-  bool cancelledInProgress = false;
-  TaskListModal taskListModel =
-      TaskListModal(); //only this is for global use variable
-
-  Future<void> cancelledTaskStatusList() async {
-    cancelledInProgress = true;
-    if (mounted) {
-      setState(() {});
-    }
-    final NetworkResponse response =
-        await NetworkCaller().getRequest(Urls.cancelledTask);
-    log(response.statusCode.toString());
-    cancelledInProgress = false;
-    if (mounted) {
-      setState(() {});
-    }
-    if (response.isSuccess) {
-      taskListModel = TaskListModal.fromJson(response.jsonResponse!);
-    }
-  }
+CanceledController canceledController=Get.find<CanceledController>();
 
   @override
   void initState() {
     super.initState();
-    cancelledTaskStatusList();
+    canceledController.cancelledTaskStatusList();
   }
 
   @override
@@ -52,26 +35,30 @@ class _CanceledState extends State<Canceled> {
         children: [
           const ProfileSummary(),
           Expanded(
-            child: Visibility(
-              visible: cancelledInProgress==false,
-              replacement: const Center(child: CircularProgressIndicator()),
-              child: ListView.builder(
-                itemBuilder: (context, index) {
-                  return CardViewItem(
-                    taskList: taskListModel.task![index],
-                    getUpdateScreen: () {
-                      cancelledTaskStatusList();
+            child: GetBuilder<CanceledController>(
+              builder: (canceledContr) {
+                return Visibility(
+                  visible: canceledContr.cancelledInProgress==false,
+                  replacement: const Center(child: CircularProgressIndicator()),
+                  child: ListView.builder(
+                    itemBuilder: (context, index) {
+                      return CardViewItem(
+                        taskList: canceledContr.taskListModel.task![index],
+                        getUpdateScreen: () {
+                          canceledContr.cancelledTaskStatusList();
+                        },
+                       /* taskInProgress: (bool inProgress) {
+                          cancelledInProgress=inProgress;
+                          if(mounted){
+                            setState(() {});
+                          }
+                        },*/ updateCountScreen: () {null;  },
+                      );
                     },
-                    taskInProgress: (bool inProgress) {
-                      cancelledInProgress=inProgress;
-                      if(mounted){
-                        setState(() {});
-                      }
-                    }, updateCountScreen: () {null;  },
-                  );
-                },
-                itemCount: taskListModel.task?.length??0,
-              ),
+                    itemCount: canceledContr.taskListModel.task?.length??0,
+                  ),
+                );
+              }
             ),
           ),
         ],

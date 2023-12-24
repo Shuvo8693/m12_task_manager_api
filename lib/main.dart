@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-
+import 'package:get/get.dart';
 import 'Screen/splash_screen.dart';
+import 'dependencies_binding.dart';
 
 
 void main() {
@@ -13,7 +14,8 @@ class TaskManager extends StatelessWidget {
   static GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
+      initialBinding: DependenciesBindings(),
       navigatorKey: navigatorKey,
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
@@ -42,3 +44,4 @@ class TaskManager extends StatelessWidget {
     );
   }
 }
+
