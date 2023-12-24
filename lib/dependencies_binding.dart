@@ -29,7 +29,7 @@ class DependenciesBindings extends Bindings{
  Get.put(SetPassWordController());
  Get.put(AuthController());
  Get.put(UserProfileController());
- Get.put(CountStatusController());
+ Get.put(CountStatusController()); ///
   }
 
 }
